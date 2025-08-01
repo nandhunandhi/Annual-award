@@ -386,7 +386,7 @@ const NominationForm = () => {
   useEffect(() => {
     const today = new Date();
     const day = today.getDate();
-    if (day < 1 || day > 9) {
+    if (day < 2 || day > 9) {
       window.location.href = '/access';
     }
   }, []);
