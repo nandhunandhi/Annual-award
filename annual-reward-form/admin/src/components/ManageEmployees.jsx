@@ -9,12 +9,12 @@ const ManageEmployees = () => {
     email: '',
     department: '',
     designation: '',
-    division: '', // ✅ new field
+    division: '',
   });
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
 
-  const API_URL = 'http://localhost:5000/api/employees';
+  const API_URL = 'https://annual-award12.onrender.com/api/employees';
   const formRef = useRef(null);
 
   const loadEmployees = async () => {
@@ -33,22 +33,6 @@ const ManageEmployees = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === 'name' && editingId) {
-      const selectedEmp = employees.find(emp => emp.name === value);
-      if (selectedEmp) {
-        setFormData({
-          name: selectedEmp.name,
-          empId: selectedEmp.empId || selectedEmp.id || '',
-          email: selectedEmp.email || '',
-          department: selectedEmp.department,
-          designation: selectedEmp.designation,
-          division: selectedEmp.division || '', // ✅ include division here too
-        });
-        return;
-      }
-    }
-
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -59,7 +43,7 @@ const ManageEmployees = () => {
       email: '',
       department: '',
       designation: '',
-      division: '', // ✅ reset division
+      division: '',
     });
     setEditingId(null);
   };
@@ -111,7 +95,7 @@ const ManageEmployees = () => {
       email: emp.email || '',
       department: emp.department,
       designation: emp.designation,
-      division: emp.division || '', // ✅ pre-fill division
+      division: emp.division || '',
     });
     setEditingId(emp._id || emp.id);
     if (formRef.current) {
@@ -135,24 +119,14 @@ const ManageEmployees = () => {
       <h1>👥 Manage Employees</h1>
 
       <form className="emp-form" onSubmit={handleSubmit} ref={formRef}>
-        {editingId ? (
-          <select name="name" value={formData.name} onChange={handleChange} required>
-            <option value="">Select employee name</option>
-            {employees.map(emp => (
-              <option key={emp._id || emp.id} value={emp.name}>
-                {emp.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Employee Name"
-            required
-          />
-        )}
+        {/* Always input field (editable) for name */}
+        <input
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Employee Name"
+          required
+        />
 
         <input
           name="empId"
@@ -196,7 +170,9 @@ const ManageEmployees = () => {
         />
 
         <button type="submit">{editingId ? 'Update' : 'Add'} Employee</button>
-        {editingId && <button type="button" onClick={resetForm}>Cancel</button>}
+        {editingId && (
+          <button type="button" onClick={resetForm}>Cancel</button>
+        )}
       </form>
 
       {message && <div className="success-message">{message}</div>}
@@ -210,7 +186,6 @@ const ManageEmployees = () => {
             <th>Email</th>
             <th>Department</th>
             <th>Designation</th>
-            {/* ✅ display division */}
             <th>Actions</th>
           </tr>
         </thead>
@@ -231,7 +206,6 @@ const ManageEmployees = () => {
                 <td>{emp.email || '—'}</td>
                 <td>{emp.department}</td>
                 <td>{emp.designation}</td>
-                {/* ✅ division display */}
                 <td>
                   <button
                     onClick={(e) => {

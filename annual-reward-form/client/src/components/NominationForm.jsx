@@ -24,7 +24,7 @@ const questionMap = {
       placeholder: "Explain how the nominee positively impacted co-workers, customers, and vendors with examples. (If any)"
     }
   ],
-  "Customer Service Performance": [
+  "Customer Service Performance / Star Service champion / Customer Hero award": [
     {
       type: "textarea",
       question: "Why does your nominee deserve to receive the Customer Service Award?",
@@ -260,7 +260,7 @@ const description = {
     " CMTechno (Engineering Services & Consultancy)",
     " LightLeader Solar (Installation & Support Services)"
   ],
-  "Customer Service Performance / Star Service champion / Customer Hero award – 2025": [
+  "Customer Service Performance / Star Service champion / Customer Hero award": [
     "Award Description:",
     "This award acknowledges individual employees who demonstrate outstanding customer service, flexibility and personal attention to develop and maintain relationships with customers. Your recommendation must include the accomplishment description and explain why the nominee deserves the Customers service award.",
     "Why does your nominee deserve to receive the Customer Service Award?",
@@ -382,13 +382,24 @@ const NominationForm = () => {
     nominatorEmail: "",
   });
 
+  //  Redirect if outside allowed date range
+  useEffect(() => {
+    const today = new Date();
+    const day = today.getDate();
+    if (day < 1 || day > 9) {
+      window.location.href = '/access';
+    }
+  }, []);
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const [employeesRes, divisionsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/employees"),
-          axios.get("http://localhost:5000/api/employees/divisions"),
+          axios.get("https://annual-award12.onrender.com/api/employees"),
+          axios.get("https://annual-award12.onrender.com/api/employees/divisions"),
         ]);
 
         setEmployees(employeesRes.data);
@@ -501,7 +512,7 @@ const NominationForm = () => {
         answers: answers
       };
 
-      await axios.post("http://localhost:5000/api/nominations", dataToSend);
+      await axios.post("https://annual-award12.onrender.com/api/nominations", dataToSend);
       alert("Nomination submitted successfully!");
       resetForm();
     } catch (err) {
@@ -699,13 +710,31 @@ const NominationForm = () => {
 
           {form.awardType && description[form.awardType] && (
             <div className="award-description">
-              {description[form.awardType].map((line, index) =>
-                (line.startsWith("Award Description:") || line.startsWith("Applicable to all divisions:")) ? (
-                  <p key={index}><b>{line}</b></p>
-                ) : (
-                  <p key={index}>{line}</p>
-                )
-              )}
+              {description[form.awardType].map((line, index) => {
+                const isHighlighted =
+                  line.startsWith("Award Description:") ||
+                  line.startsWith("Applicable to all divisions:") ||
+                  line.startsWith("Nominating Authority: Team Manager/Manager") ||
+                  line.startsWith("Nominating Authority: Management/Team Manager/Senior Employees") ||
+                  line.startsWith("Nominating Authority: Team Manager") ||
+                  line.startsWith("Nominating Authority: Management/AVP/Senior Managers") ||
+                  line.startsWith("Nominating Authority: Management") ||
+                  line.startsWith("Nominating Authority: Management/AVP/Senior Managers");
+
+                return (
+                  <p
+                    key={index}
+                    style={{
+                      fontWeight: isHighlighted ? 'bold' : 'normal',
+                      fontSize: isHighlighted ? '1.15rem' : '1rem',  // Adjust as needed
+                      marginTop: isHighlighted ? '0.8em' : '0.3em'   // Optional spacing tweak
+                    }}
+                  >
+                    {line}
+                  </p>
+                );
+              })}
+
 
             </div>
           )}
@@ -739,10 +768,7 @@ const NominationForm = () => {
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Nominator Email</label>
-              <input readOnly value={form.nominatorEmail} />
-            </div>
+
             <div className="form-group">
               <label>Nominator Department</label>
               <input readOnly value={form.nominatorDept} />
