@@ -20,9 +20,9 @@ const AdminDashboard = () => {
     const fetchAllData = async () => {
       try {
         const [nominationsRes, divisionsRes, employeesRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/nominations'),
-          axios.get('http://localhost:5000/api/employees/divisions'),
-          axios.get('http://localhost:5000/api/employees')
+          axios.get('https://annual-award12.onrender.com/api/nominations'),
+          axios.get('https://annual-award12.onrender.com/api/employees/divisions'),
+          axios.get('https://annual-award12.onrender.com/api/employees')
         ]);
 
         setNominations(nominationsRes.data);
@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const handleDeleteAll = async () => {
     if (!window.confirm('Are you sure you want to delete all nominations?')) return;
     try {
-      await axios.delete("http://localhost:5000/api/nominations");
+      await axios.delete("https://annual-award12.onrender.com/api/nominations");
       alert('✅ Deleted successfully');
       window.location.reload();
     } catch {
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
     try {
       // 1. Fetch nominations directly from state instead of API call (since you already have them)
       // Or use the API if you need fresh data:
-      const response = await axios.get("http://localhost:5000/api/nominations/download/all");
+      const response = await axios.get("https://annual-award12.onrender.com/api/nominations/download/all");
 
       // 2. Handle the response data properly
       let nominationsData = response.data;
@@ -307,3 +307,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
